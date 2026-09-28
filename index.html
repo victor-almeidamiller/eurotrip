@@ -4038,22 +4038,22 @@
         <div class="view" id="view-checklist" style="display:none;">
             <h2 class="view-title">Checklist</h2>
             <div class="checklist-card">
-                <h3>Mala do Viajante 1</h3>
+                <h3>Mochila</h3>
                 <div class="checklist-add">
-                    <input type="text" id="checklist-input-viajante1" class="checklist-input" placeholder="O que o Viajante 1 vai levar?" onkeydown="if(event.key==='Enter'){addChecklistItem('viajante1');}">
-                    <button type="button" class="checklist-add-btn" onclick="addChecklistItem('viajante1')">Adicionar</button>
+                    <input type="text" id="checklist-input-mochila" class="checklist-input" placeholder="O que vai na mochila?" onkeydown="if(event.key==='Enter'){addChecklistItem('mochila');}">
+                    <button type="button" class="checklist-add-btn" onclick="addChecklistItem('mochila')">Adicionar</button>
                 </div>
-                <div class="checklist-progress" id="checklist-progress-viajante1"></div>
-                <div class="checklist-list" id="checklist-list-viajante1"></div>
+                <div class="checklist-progress" id="checklist-progress-mochila"></div>
+                <div class="checklist-list" id="checklist-list-mochila"></div>
             </div>
             <div class="checklist-card" style="margin-top: 16px;">
-                <h3>Mala do Viajante 2</h3>
+                <h3>Mala de Mão</h3>
                 <div class="checklist-add">
-                    <input type="text" id="checklist-input-viajante2" class="checklist-input" placeholder="O que o Viajante 2 vai levar?" onkeydown="if(event.key==='Enter'){addChecklistItem('viajante2');}">
-                    <button type="button" class="checklist-add-btn" onclick="addChecklistItem('viajante2')">Adicionar</button>
+                    <input type="text" id="checklist-input-malademao" class="checklist-input" placeholder="O que vai na mala de mão?" onkeydown="if(event.key==='Enter'){addChecklistItem('malademao');}">
+                    <button type="button" class="checklist-add-btn" onclick="addChecklistItem('malademao')">Adicionar</button>
                 </div>
-                <div class="checklist-progress" id="checklist-progress-viajante2"></div>
-                <div class="checklist-list" id="checklist-list-viajante2"></div>
+                <div class="checklist-progress" id="checklist-progress-malademao"></div>
+                <div class="checklist-list" id="checklist-list-malademao"></div>
             </div>
         </div><!-- fim view-checklist -->
         </div><!-- fim container -->
@@ -4266,8 +4266,8 @@
             saveChecklist(person, items);
             renderChecklist(person);
         }
-        renderChecklist('viajante1');
-        renderChecklist('viajante2');
+        renderChecklist('mochila');
+        renderChecklist('malademao');
 
         // 0. Modo Escuro
         function applyTheme(isDark) {
