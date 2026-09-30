@@ -4552,4 +4552,97 @@
         }
 
         // Busca a cotação logo que abre o site e depois a cada 5 minutos
-        fetchExchangeRates(
+        fetchExchangeRates();
+        setInterval(fetchExchangeRates, 5 * 60 * 1000);
+
+        // 3. Conversor rápido: menu suspenso escolhe a direção (€/£ <-> R$)
+        function updateQuickConverter() {
+            const resultEl = document.getElementById('conv-result');
+            if (!resultEl) return;
+
+            const direction = document.getElementById('conv-direction').value;
+            const amount = parseFloat(document.getElementById('conv-amount').value);
+            const fmt = v => v.toFixed(2).replace('.', ',');
+
+            if (!latestRates) {
+                resultEl.textContent = 'Buscando a cotação... tenta de novo em alguns segundos.';
+                return;
+            }
+            if (isNaN(amount)) {
+                resultEl.textContent = 'Digite um valor acima.';
+                return;
+            }
+
+            let text = '';
+            if (direction === 'eur-brl') {
+                text = `€ ${fmt(amount)} = R$ ${fmt(amount * latestRates.eur)}`;
+            } else if (direction === 'gbp-brl') {
+                text = `£ ${fmt(amount)} = R$ ${fmt(amount * latestRates.gbp)}`;
+            } else if (direction === 'brl-eur') {
+                text = latestRates.eur ? `R$ ${fmt(amount)} = € ${fmt(amount / latestRates.eur)}` : 'Cotação indisponível no momento.';
+            } else if (direction === 'brl-gbp') {
+                text = latestRates.gbp ? `R$ ${fmt(amount)} = £ ${fmt(amount / latestRates.gbp)}` : 'Cotação indisponível no momento.';
+            }
+            resultEl.innerHTML = `<div class="sim-highlight">${text}</div>`;
+        }
+        updateQuickConverter();
+
+        // 3. Simulador: converter na Wise agora vs. pagar direto no cartão de crédito
+        const SIM_CARD_SPREAD = 0.058;
+        const SIM_CARD_IOF = 0.035;
+        const SIM_WISE_FEE = 0.004;
+        const SIM_WISE_IOF = 0.011;
+        function updateSimulator() {
+            const resultEl = document.getElementById('sim-result');
+            if (!resultEl) return;
+
+            const currency = document.getElementById('sim-currency').value;
+            const amount = parseFloat(document.getElementById('sim-amount').value);
+            const cardSpread = SIM_CARD_SPREAD;
+            const cardIof = SIM_CARD_IOF;
+            const wiseFee = SIM_WISE_FEE;
+            const wiseIof = SIM_WISE_IOF;
+
+            if (!latestRates) {
+                resultEl.textContent = 'Buscando a cotação... tenta de novo em alguns segundos.';
+                return;
+            }
+            if (isNaN(amount) || amount <= 0) {
+                resultEl.textContent = 'Preencha o valor da compra acima pra comparar.';
+                return;
+            }
+
+            const rate = currency === 'eur' ? latestRates.eur : latestRates.gbp;
+            if (!rate) {
+                resultEl.textContent = 'Cotação indisponível no momento.';
+                return;
+            }
+
+            const fmt = v => v.toFixed(2).replace('.', ',');
+            const baseBRL = amount * rate;
+            const cardTotal = baseBRL * (1 + (isNaN(cardSpread) ? 0 : cardSpread)) * (1 + (isNaN(cardIof) ? 0 : cardIof));
+            const wiseTotal = baseBRL * (1 + (isNaN(wiseFee) ? 0 : wiseFee)) * (1 + (isNaN(wiseIof) ? 0 : wiseIof));
+            const diff = Math.abs(cardTotal - wiseTotal);
+            const cardIsCheaper = cardTotal < wiseTotal;
+            const cheaperLabel = cardIsCheaper ? '💳 Cartão' : '🌐 Wise';
+
+            resultEl.innerHTML = `
+                <div class="sim-line">💳 Pagando no cartão: <strong>R$ ${fmt(cardTotal)}</strong></div>
+                <div class="sim-line">🌐 Convertendo na Wise: <strong>R$ ${fmt(wiseTotal)}</strong></div>
+                <div class="sim-highlight">${cheaperLabel} sai mais barato aqui, por R$ ${fmt(diff)} (câmbio comercial seria R$ ${fmt(baseBRL)})</div>
+            `;
+        }
+        updateSimulator();
+    </script>
+    <script>
+        // Registra o service worker (sw.js, precisa estar na mesma pasta no
+        // GitHub) só pra o Chrome/Android considerar isso um "app instalável"
+        // de verdade e tirar o iconezinho do navegador de cima do ícone.
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            });
+        }
+    </script>
+</body>
+</html>
