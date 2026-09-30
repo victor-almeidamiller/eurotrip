@@ -596,6 +596,69 @@
             color: #7a5b12;
             white-space: nowrap;
         }
+        .sim-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .sim-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 8px 12px;
+            border-top: 3px solid #c9a227;
+            box-shadow: 0 2px 4px rgba(15,27,45,0.06);
+        }
+        .sim-label {
+            font-weight: bold;
+            color: #10233b;
+            font-size: 0.88rem;
+        }
+        .sim-row .calculator-input {
+            max-width: 110px;
+            flex: none;
+            text-align: right;
+        }
+        .sim-row select.calculator-input {
+            max-width: 220px;
+            flex: 1;
+            text-align: left;
+        }
+        .sim-row {
+            flex-wrap: wrap;
+        }
+        .sim-result {
+            margin-top: 14px;
+            background-color: #fbf7ec;
+            border: 1px dashed #d8cca4;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 0.92rem;
+            color: #5f6c6f;
+        }
+        .sim-line {
+            margin-bottom: 4px;
+        }
+        .sim-highlight {
+            color: #10233b;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+        .sim-note {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #5f6c6f;
+            line-height: 1.4;
+        }
+        .sim-fees-info {
+            margin-top: 10px;
+            font-size: 0.82rem;
+            color: #5f6c6f;
+            line-height: 1.4;
+        }
 
         /* Relógios */
         .clocks {
@@ -1106,6 +1169,28 @@
         body.dark-mode .calculator-section-alt {
             border-top-color: #3a4a5c;
         }
+        body.dark-mode .sim-row {
+            background-color: #16222f;
+            border-top-color: #c9a227;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+        }
+        body.dark-mode .sim-label {
+            color: #f2e6c2;
+        }
+        body.dark-mode .sim-result {
+            background-color: #16324a;
+            border-color: #3a4a5c;
+            color: #b9c2c6;
+        }
+        body.dark-mode .sim-highlight {
+            color: #e8c468;
+        }
+        body.dark-mode .sim-note {
+            color: #9aa4a8;
+        }
+        body.dark-mode .sim-fees-info {
+            color: #9aa4a8;
+        }
         body.dark-mode .trip-calendar {
             border-top-color: #3a4a5c;
         }
@@ -1190,6 +1275,16 @@
             }
             .calculator-input {
                 min-width: 0;
+            }
+            .sim-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .sim-row .calculator-input,
+            .sim-row select.calculator-input {
+                max-width: none;
+                width: 100%;
+                text-align: left;
             }
             .quick-nav-links {
                 display: grid;
@@ -1447,35 +1542,41 @@
         </div>
 
         <div class="calculator-section">
-            <h3 class="calculator-subtitle">Euro e Libra → Real</h3>
-            <div class="calculator-group">
-                <div class="calculator">
-                    <span class="calculator-label">🧮 €</span>
-                    <input type="number" id="calc-eur" class="calculator-input" placeholder="Valor em euro" oninput="updateCalculator('eur')">
-                    <span class="calculator-result">= R$ <span id="calc-eur-result">0,00</span></span>
+            <h3 class="calculator-subtitle">Conversor rápido</h3>
+            <div class="sim-inputs">
+                <div class="sim-row">
+                    <span class="sim-label">Converter</span>
+                    <select id="conv-direction" class="calculator-input" onchange="updateQuickConverter()">
+                        <option value="eur-brl">€ Euro → R$ Real</option>
+                        <option value="gbp-brl">£ Libra → R$ Real</option>
+                        <option value="brl-eur">R$ Real → € Euro</option>
+                        <option value="brl-gbp">R$ Real → £ Libra</option>
+                    </select>
                 </div>
-                <div class="calculator">
-                    <span class="calculator-label">🧮 £</span>
-                    <input type="number" id="calc-gbp" class="calculator-input" placeholder="Valor em libra" oninput="updateCalculator('gbp')">
-                    <span class="calculator-result">= R$ <span id="calc-gbp-result">0,00</span></span>
+                <div class="sim-row">
+                    <span class="sim-label">Valor</span>
+                    <input type="number" id="conv-amount" class="calculator-input" placeholder="0" oninput="updateQuickConverter()">
                 </div>
             </div>
+            <div class="sim-result" id="conv-result">Digite um valor acima.</div>
         </div>
-
         <div class="calculator-section calculator-section-alt">
-            <h3 class="calculator-subtitle">Real → Euro e Libra</h3>
-            <div class="calculator-group">
-                <div class="calculator">
-                    <span class="calculator-label">🧮 R$</span>
-                    <input type="number" id="calc-brl-eur" class="calculator-input" placeholder="Valor em real" oninput="updateCalculator('brl-eur')">
-                    <span class="calculator-result">= € <span id="calc-brl-eur-result">0,00</span></span>
+            <h3 class="calculator-subtitle">Vale mais a pena converter na Wise ou pagar no cartão?</h3>
+            <div class="sim-inputs">
+                <div class="sim-row">
+                    <span class="sim-label">Moeda da compra</span>
+                    <select id="sim-currency" class="calculator-input" onchange="updateSimulator()">
+                        <option value="eur">€ Euro</option>
+                        <option value="gbp">£ Libra</option>
+                    </select>
                 </div>
-                <div class="calculator">
-                    <span class="calculator-label">🧮 R$</span>
-                    <input type="number" id="calc-brl-gbp" class="calculator-input" placeholder="Valor em real" oninput="updateCalculator('brl-gbp')">
-                    <span class="calculator-result">= £ <span id="calc-brl-gbp-result">0,00</span></span>
+                <div class="sim-row">
+                    <span class="sim-label">Valor da compra</span>
+                    <input type="number" id="sim-amount" class="calculator-input" placeholder="Ex: 20" oninput="updateSimulator()">
                 </div>
             </div>
+            <div class="sim-fees-info">💳 Cartão: spread 5,8% + IOF 3,5% &nbsp;|&nbsp; 🌐 Wise: taxa 0,4% + IOF 1,1%</div>
+            <div class="sim-result" id="sim-result">Preencha o valor da compra acima pra comparar.</div>
         </div>
         </div><!-- fim view-cotacao -->
 
@@ -4375,7 +4476,8 @@
                 : '';
 
             latestRates = rates;
-            updateCalculator();
+            updateQuickConverter();
+            updateSimulator();
 
             // Converte automaticamente todo valor em euro marcado com a classe "eur-value"
             // (basta usar data-eur="X.XX" + um <span class="brl-live"> dentro para o R$ aparecer sozinho)
@@ -4403,34 +4505,84 @@
         fetchExchangeRates();
         setInterval(fetchExchangeRates, 5 * 60 * 1000);
 
-        // 3. Calculadora rápida: € ou £ -> R$
-        function updateCalculator(changed) {
-            const eurInput = document.getElementById('calc-eur');
-            const gbpInput = document.getElementById('calc-gbp');
-            const eurResult = document.getElementById('calc-eur-result');
-            const gbpResult = document.getElementById('calc-gbp-result');
-            const brlEurInput = document.getElementById('calc-brl-eur');
-            const brlGbpInput = document.getElementById('calc-brl-gbp');
-            const brlEurResult = document.getElementById('calc-brl-eur-result');
-            const brlGbpResult = document.getElementById('calc-brl-gbp-result');
+        // 3. Conversor rápido: menu suspenso escolhe a direção (€/£ <-> R$)
+        function updateQuickConverter() {
+            const resultEl = document.getElementById('conv-result');
+            if (!resultEl) return;
 
-            if (changed === 'eur' || !changed) {
-                const eur = parseFloat(eurInput.value);
-                eurResult.textContent = (!latestRates || isNaN(eur)) ? '0,00' : (eur * latestRates.eur).toFixed(2).replace('.', ',');
+            const direction = document.getElementById('conv-direction').value;
+            const amount = parseFloat(document.getElementById('conv-amount').value);
+            const fmt = v => v.toFixed(2).replace('.', ',');
+
+            if (!latestRates) {
+                resultEl.textContent = 'Buscando a cotação... tenta de novo em alguns segundos.';
+                return;
             }
-            if (changed === 'gbp' || !changed) {
-                const gbp = parseFloat(gbpInput.value);
-                gbpResult.textContent = (!latestRates || isNaN(gbp)) ? '0,00' : (gbp * latestRates.gbp).toFixed(2).replace('.', ',');
+            if (isNaN(amount)) {
+                resultEl.textContent = 'Digite um valor acima.';
+                return;
             }
-            if (changed === 'brl-eur' || !changed) {
-                const brl = parseFloat(brlEurInput.value);
-                brlEurResult.textContent = (!latestRates || isNaN(brl) || !latestRates.eur) ? '0,00' : (brl / latestRates.eur).toFixed(2).replace('.', ',');
+
+            let text = '';
+            if (direction === 'eur-brl') {
+                text = `€ ${fmt(amount)} = R$ ${fmt(amount * latestRates.eur)}`;
+            } else if (direction === 'gbp-brl') {
+                text = `£ ${fmt(amount)} = R$ ${fmt(amount * latestRates.gbp)}`;
+            } else if (direction === 'brl-eur') {
+                text = latestRates.eur ? `R$ ${fmt(amount)} = € ${fmt(amount / latestRates.eur)}` : 'Cotação indisponível no momento.';
+            } else if (direction === 'brl-gbp') {
+                text = latestRates.gbp ? `R$ ${fmt(amount)} = £ ${fmt(amount / latestRates.gbp)}` : 'Cotação indisponível no momento.';
             }
-            if (changed === 'brl-gbp' || !changed) {
-                const brl = parseFloat(brlGbpInput.value);
-                brlGbpResult.textContent = (!latestRates || isNaN(brl) || !latestRates.gbp) ? '0,00' : (brl / latestRates.gbp).toFixed(2).replace('.', ',');
-            }
+            resultEl.innerHTML = `<div class="sim-highlight">${text}</div>`;
         }
+        updateQuickConverter();
+
+        // 3. Simulador: converter na Wise agora vs. pagar direto no cartão de crédito
+        const SIM_CARD_SPREAD = 0.058;
+        const SIM_CARD_IOF = 0.035;
+        const SIM_WISE_FEE = 0.004;
+        const SIM_WISE_IOF = 0.011;
+        function updateSimulator() {
+            const resultEl = document.getElementById('sim-result');
+            if (!resultEl) return;
+
+            const currency = document.getElementById('sim-currency').value;
+            const amount = parseFloat(document.getElementById('sim-amount').value);
+            const cardSpread = SIM_CARD_SPREAD;
+            const cardIof = SIM_CARD_IOF;
+            const wiseFee = SIM_WISE_FEE;
+            const wiseIof = SIM_WISE_IOF;
+
+            if (!latestRates) {
+                resultEl.textContent = 'Buscando a cotação... tenta de novo em alguns segundos.';
+                return;
+            }
+            if (isNaN(amount) || amount <= 0) {
+                resultEl.textContent = 'Preencha o valor da compra acima pra comparar.';
+                return;
+            }
+
+            const rate = currency === 'eur' ? latestRates.eur : latestRates.gbp;
+            if (!rate) {
+                resultEl.textContent = 'Cotação indisponível no momento.';
+                return;
+            }
+
+            const fmt = v => v.toFixed(2).replace('.', ',');
+            const baseBRL = amount * rate;
+            const cardTotal = baseBRL * (1 + (isNaN(cardSpread) ? 0 : cardSpread)) * (1 + (isNaN(cardIof) ? 0 : cardIof));
+            const wiseTotal = baseBRL * (1 + (isNaN(wiseFee) ? 0 : wiseFee)) * (1 + (isNaN(wiseIof) ? 0 : wiseIof));
+            const diff = Math.abs(cardTotal - wiseTotal);
+            const cardIsCheaper = cardTotal < wiseTotal;
+            const cheaperLabel = cardIsCheaper ? '💳 Cartão' : '🌐 Wise';
+
+            resultEl.innerHTML = `
+                <div class="sim-line">💳 Pagando no cartão: <strong>R$ ${fmt(cardTotal)}</strong></div>
+                <div class="sim-line">🌐 Convertendo na Wise: <strong>R$ ${fmt(wiseTotal)}</strong></div>
+                <div class="sim-highlight">${cheaperLabel} sai mais barato aqui, por R$ ${fmt(diff)} (câmbio comercial seria R$ ${fmt(baseBRL)})</div>
+            `;
+        }
+        updateSimulator();
     </script>
     <script>
         // Registra o service worker (sw.js, precisa estar na mesma pasta no
